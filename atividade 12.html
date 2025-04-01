@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cálculo de desconto</title>
+</head>
+<body>
+    <script>
+        let precoOriginal = prompt("Digite o preço original do produto:");
+        let porcentagemDesconto = prompt("Digite a porcentagem de desconto (ex.: 10 para 10%):");
+        
+        let preco = parseFloat(precoOriginal);
+        let desconto = parseFloat(porcentagemDesconto);
+        
+        let valorDesconto = (preco * desconto) / 100;
+        let precoFinal = preco - valorDesconto;
+        
+        document.write("O preço original é R$" + preco.toFixed(2) + ".<br>");
+        document.write("Com " + desconto + "% de desconto, o preço final é R$" + precoFinal.toFixed(2) + ".");
+    </script>
+</body>
+</html>
