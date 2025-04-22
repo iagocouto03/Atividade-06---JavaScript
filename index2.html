@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade 0.7 - JavaScript (Conhecendo comando DOM)</title>
+</head>
+<body>
+    <h1 id="titulo1">Iniciando com o DOM!</h1>
+    <p class="paragrafo">Aqui vai o resultado</p>
+    <div id="msg">Uma mensagem</div>
+    <hr>
+
+    <script>
+        // Acessando informações do documento
+        document.write("Olá Mundo!<br>");
+        document.write(window.document.charset + "<br>");
+        document.write(window.navigator.appName + "<br>");
+        document.write(window.document.URL + "<br>");
+
+        // Acessando e modificando elementos HTML
+        document.getElementById("titulo1").innerText = "Mudei o título";
+        document.getElementById("titulo1").style.color = "blue";
+
+        document.querySelector("p").style.color = "red";
+        document.querySelector(".paragrafo").style.background = "yellow";
+        document.querySelector("#msg").innerText = "Nova mensagem!";
+
+        // Criando novos elementos
+        let novoParagrafo = document.createElement("p");
+        novoParagrafo.innerText = "Este é um novo parágrafo";
+        document.body.appendChild(novoParagrafo);
+
+        // Removendo elementos
+        let textoh1 = document.getElementById("titulo1");
+        textoh1.remove();
+    </script>
+</body>
+</html>

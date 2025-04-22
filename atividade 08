@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Atividade 08 - Lista de Nomes</title>
+</head>
+<body>
+    <h1>Lista de Nomes</h1>
+    
+    <input type="text" id="nomeInput" placeholder="Digite um nome">
+    <button onclick="adicionarNome()">Adicionar</button>
+    <button onclick="removerItem()">Remover Último Item</button>
+    <button onclick="limparLista()">Limpar Lista</button>
+    
+    <ul id="listaNomes"></ul>
+
+    <script>
+        // Função para adicionar nome à lista
+        function adicionarNome() {
+            const input = document.getElementById('nomeInput');
+            const nome = input.value.trim();
+            
+            if (nome !== '') {
+                const lista = document.getElementById('listaNomes');
+                const item = document.createElement('li');
+                item.textContent = nome;
+                lista.appendChild(item);
+                input.value = ''; // Limpa o input
+            }
+        }
+
+        // Função para remover o último item da lista
+        function removerItem() {
+            const lista = document.getElementById('listaNomes');
+            if (lista.lastChild) {
+                lista.removeChild(lista.lastChild);
+            }
+        }
+
+        // Função para limpar toda a lista
+        function limparLista() {
+            const lista = document.getElementById('listaNomes');
+            while (lista.firstChild) {
+                lista.removeChild(lista.firstChild);
+            }
+        }
+    </script>
+</body>
+</html>
