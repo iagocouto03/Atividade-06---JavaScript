@@ -1,53 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-
-        .area {
-            background-color: aquamarine;
-            color: blueviolet;
-            width: 200px;
-            height: 200px;
-            text-align: center;
-        }
-
-    </style>
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-
-    <div class="area">
-        Interaja...
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-container">
+            <input type="text" id="taskInput" placeholder="Adicionar nova tarefa">
+            <button onclick="addTask()">Adicionar</button>
+        </div>
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('all')">Todas</button>
+            <button class="tab" onclick="showTab('pending')">Pendentes</button>
+            <button class="tab" onclick="showTab('completed')">Concluídas</button>
+        </div>
+        <ul id="taskList"></ul>
     </div>
-
-
-    <script>
-
-        let a = document.querySelector(".area");
-        a.addEventListener("click", clicar);
-        a.addEventListener("mouseenter", entrar);
-        a.addEventListener("mouseout", sair);
-
-        function clicar () 
-        {
-            a.innerText = "CLICOU!";
-            a.style.background = "red";
-        }
-
-        function entrar () 
-        {
-            a.innerText = "PASSOU!";
-        }
-
-        function sair () 
-        {
-            a.innerText = "SAIU!";
-            a.style.background = "orange";
-        }
-
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
