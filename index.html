@@ -3,24 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
+    <title>Planner Semanal Interativo</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
     <div class="container">
-        <h1>To-Do List</h1>
-        <div class="input-container">
-            <input type="text" id="taskInput" placeholder="Adicionar nova tarefa">
-            <button onclick="addTask()">Adicionar</button>
-        </div>
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('all')">Todas</button>
-            <button class="tab" onclick="showTab('pending')">Pendentes</button>
-            <button class="tab" onclick="showTab('completed')">Concluídas</button>
-        </div>
-        <ul id="taskList"></ul>
+        <header class="header">
+            <h1>📅 Meu Planner Semanal</h1>
+            <p>Organize suas tarefas de forma simples e eficiente!</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Seletor de dias da semana -->
+            <div class="day-selector">
+                <button class="day-btn active" data-day="segunda">Segunda</button>
+                <button class="day-btn" data-day="terca">Terça</button>
+                <button class="day-btn" data-day="quarta">Quarta</button>
+                <button class="day-btn" data-day="quinta">Quinta</button>
+                <button class="day-btn" data-day="sexta">Sexta</button>
+                <button class="day-btn" data-day="sabado">Sábado</button>
+                <button class="day-btn" data-day="domingo">Domingo</button>
+            </div>
+
+            <!-- Área de adição de tarefas -->
+            <div class="task-input-area">
+                <input type="text" id="taskInput" placeholder="Digite sua nova tarefa..." maxlength="100">
+                <button id="addTaskBtn">➕ Adicionar</button>
+            </div>
+
+            <!-- Área de exibição das tarefas -->
+            <div class="tasks-container">
+                <div class="day-header">
+                    <h2 id="currentDayTitle">Segunda-feira</h2>
+                    <span id="taskCounter">0 tarefas</span>
+                </div>
+                
+                <div class="tasks-list" id="tasksList">
+                    <!-- As tarefas serão inseridas aqui dinamicamente -->
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <p>🎯 Nenhuma tarefa para hoje!</p>
+                    <p>Adicione uma tarefa acima para começar.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Desenvolvido com ❤️ para organizar sua semana</p>
+        </footer>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>

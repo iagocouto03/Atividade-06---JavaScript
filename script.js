@@ -1,86 +1,224 @@
-let tasks = [];
-let editingTaskId = null;
+// Objeto para armazenar as tarefas de cada dia
+const tasksData = {
+    segunda: [],
+    terca: [],
+    quarta: [],
+    quinta: [],
+    sexta: [],
+    sabado: [],
+    domingo: []
+};
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    document.querySelector('.container').classList.toggle('dark-mode');
-    const themeButton = document.querySelector('.theme-toggle');
-    themeButton.textContent = document.body.classList.contains('dark-mode') ? '☀' : '🌙';
+// Mapeamento dos dias para exibição
+const dayNames = {
+    segunda: 'Segunda-feira',
+    terca: 'Terça-feira',
+    quarta: 'Quarta-feira',
+    quinta: 'Quinta-feira',
+    sexta: 'Sexta-feira',
+    sabado: 'Sábado',
+    domingo: 'Domingo'
+};
+
+// Variável para controlar o dia atual selecionado
+let currentDay = 'segunda';
+
+// Referências aos elementos HTML
+const dayButtons = document.querySelectorAll('.day-btn');
+const taskInput = document.getElementById('taskInput');
+const addTaskBtn = document.getElementById('addTaskBtn');
+const tasksList = document.getElementById('tasksList');
+const currentDayTitle = document.getElementById('currentDayTitle');
+const taskCounter = document.getElementById('taskCounter');
+const emptyState = document.getElementById('emptyState');
+
+// Função para inicializar o aplicativo
+function initApp() {
+    loadTasksFromStorage();
+    setupEventListeners();
+    displayTasks(currentDay);
+    updateDayTitle();
 }
 
+// Função para configurar os event listeners
+function setupEventListeners() {
+    // Event listeners para os botões dos dias
+    dayButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            selectDay(this.dataset.day);
+        });
+    });
+
+    // Event listener para o botão de adicionar tarefa
+    addTaskBtn.addEventListener('click', addTask);
+
+    // Event listener para pressionar Enter no campo de input
+    taskInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            addTask();
+        }
+    });
+}
+
+// Função para selecionar um dia
+function selectDay(day) {
+    // Remove a classe active de todos os botões
+    dayButtons.forEach(btn => btn.classList.remove('active'));
+    
+    // Adiciona a classe active ao botão clicado
+    const selectedButton = document.querySelector(`[data-day="${day}"]`);
+    selectedButton.classList.add('active');
+    
+    // Atualiza o dia atual
+    currentDay = day;
+    
+    // Atualiza a exibição
+    updateDayTitle();
+    displayTasks(day);
+}
+
+// Função para atualizar o título do dia
+function updateDayTitle() {
+    currentDayTitle.textContent = dayNames[currentDay];
+}
+
+// Função para adicionar uma nova tarefa
 function addTask() {
-    const taskInput = document.getElementById('taskInput');
     const taskText = taskInput.value.trim();
-    if (taskText === '') return;
-
-    if (editingTaskId !== null) {
-        tasks = tasks.map(task => 
-            task.id === editingTaskId ? { ...task, text: taskText } : task
-        );
-        editingTaskId = null;
-    } else {
-        const task = {
-            id: Date.now(),
-            text: taskText,
-            completed: false
-        };
-        tasks.push(task);
+    
+    // Verifica se o campo não está vazio
+    if (taskText === '') {
+        alert('Por favor, digite uma tarefa!');
+        return;
     }
-
+    
+    // Cria o objeto da tarefa
+    const task = {
+        id: Date.now(), // ID único baseado no timestamp
+        text: taskText,
+        completed: false
+    };
+    
+    // Adiciona a tarefa ao array do dia atual
+    tasksData[currentDay].push(task);
+    
+    // Limpa o campo de input
     taskInput.value = '';
-    renderTasks();
+    
+    // Atualiza a exibição
+    displayTasks(currentDay);
+    
+    // Salva no localStorage
+    saveTasksToStorage();
 }
 
-function editTask(id) {
-    const task = tasks.find(task => task.id === id);
+// Função para exibir as tarefas do dia selecionado
+function displayTasks(day) {
+    const tasks = tasksData[day];
+    
+    // Limpa a lista atual
+    tasksList.innerHTML = '';
+    
+    // Verifica se há tarefas
+    if (tasks.length === 0) {
+        emptyState.style.display = 'block';
+        updateTaskCounter(0);
+        return;
+    }
+    
+    // Esconde o estado vazio
+    emptyState.style.display = 'none';
+    
+    // Cria os elementos HTML para cada tarefa
+    tasks.forEach(task => {
+        const taskElement = createTaskElement(task);
+        tasksList.appendChild(taskElement);
+    });
+    
+    // Atualiza o contador
+    updateTaskCounter(tasks.length);
+}
+
+// Função para criar o elemento HTML de uma tarefa
+function createTaskElement(task) {
+    const taskItem = document.createElement('div');
+    taskItem.className = `task-item ${task.completed ? 'completed' : ''}`;
+    
+    taskItem.innerHTML = `
+        <div class="task-checkbox ${task.completed ? 'checked' : ''}" onclick="toggleTask(${task.id})"></div>
+        <span class="task-text">${task.text}</span>
+        <button class="task-delete" onclick="deleteTask(${task.id})">🗑️ Remover</button>
+    `;
+    
+    return taskItem;
+}
+
+// Função para marcar/desmarcar uma tarefa como concluída
+function toggleTask(taskId) {
+    const tasks = tasksData[currentDay];
+    const task = tasks.find(t => t.id === taskId);
+    
     if (task) {
-        document.getElementById('taskInput').value = task.text;
-        editingTaskId = id;
+        task.completed = !task.completed;
+        displayTasks(currentDay);
+        saveTasksToStorage();
     }
 }
 
-function deleteTask(id) {
-    tasks = tasks.filter(task => task.id !== id);
-    renderTasks();
-}
-
-function toggleTask(id) {
-    tasks = tasks.map(task => 
-        task.id === id ? { ...task, completed: !task.completed } : task
-    );
-    renderTasks();
-}
-
-function showTab(tab) {
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-    renderTasks(tab);
-}
-
-function renderTasks(filter = 'all') {
-    const taskList = document.getElementById('taskList');
-    taskList.innerHTML = '';
-
-    let filteredTasks = tasks;
-    if (filter === 'pending') {
-        filteredTasks = tasks.filter(task => !task.completed);
-    } else if (filter === 'completed') {
-        filteredTasks = tasks.filter(task => task.completed);
+// Função para remover uma tarefa
+function deleteTask(taskId) {
+    const tasks = tasksData[currentDay];
+    const taskIndex = tasks.findIndex(t => t.id === taskId);
+    
+    if (taskIndex !== -1) {
+        // Confirma a remoção
+        if (confirm('Tem certeza que deseja remover esta tarefa?')) {
+            tasks.splice(taskIndex, 1);
+            displayTasks(currentDay);
+            saveTasksToStorage();
+        }
     }
-
-    filteredTasks.forEach(task => {
-        const li = document.createElement('li');
-        li.className = task.completed ? 'completed' : '';
-        li.innerHTML = `
-            <span>${task.text}</span>
-            <div class="task-actions">
-                <input type="checkbox" ${task.completed ? 'checked' : ''} 
-                    onchange="toggleTask(${task.id})">
-                <button class="edit-btn" onclick="editTask(${task.id})">Editar</button>
-                <button class="delete-btn" onclick="deleteTask(${task.id})">Deletar</button>
-            </div>
-        `;
-        taskList.appendChild(li);
-    });
 }
+
+// Função para atualizar o contador de tarefas
+function updateTaskCounter(count) {
+    const completedTasks = tasksData[currentDay].filter(task => task.completed).length;
+    
+    if (count === 0) {
+        taskCounter.textContent = '0 tarefas';
+    } else if (count === 1) {
+        taskCounter.textContent = `1 tarefa (${completedTasks} concluída${completedTasks !== 1 ? 's' : ''})`;
+    } else {
+        taskCounter.textContent = `${count} tarefas (${completedTasks} concluída${completedTasks !== 1 ? 's' : ''})`;
+    }
+}
+
+// Função para salvar as tarefas no localStorage
+function saveTasksToStorage() {
+    try {
+        localStorage.setItem('plannerTasks', JSON.stringify(tasksData));
+    } catch (error) {
+        console.log('Erro ao salvar no localStorage:', error);
+    }
+}
+
+// Função para carregar as tarefas do localStorage
+function loadTasksFromStorage() {
+    try {
+        const savedTasks = localStorage.getItem('plannerTasks');
+        if (savedTasks) {
+            const parsedTasks = JSON.parse(savedTasks);
+            // Mescla os dados salvos com a estrutura padrão
+            Object.keys(tasksData).forEach(day => {
+                if (parsedTasks[day]) {
+                    tasksData[day] = parsedTasks[day];
+                }
+            });
+        }
+    } catch (error) {
+        console.log('Erro ao carregar do localStorage:', error);
+    }
+}
+
+// Inicializa o aplicativo quando a página carrega
+document.addEventListener('DOMContentLoaded', initApp);
